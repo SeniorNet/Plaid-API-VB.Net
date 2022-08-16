@@ -1,0 +1,17 @@
+﻿@import "../Styles/variables.scss";
+
+.containerContainer {
+    display: grid;
+    grid-template-columns: 15% 57% 28%;
+    width: 100%;
+    border-top: 1px solid $black200;
+}
+
+.containerContents {
+    margin: 2 * $unit 3 * $unit;
+}
+
+.containerButtons {
+    display: flex;
+    flex-direction: column;
+}

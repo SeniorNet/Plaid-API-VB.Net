@@ -1,0 +1,41 @@
+@using PlaidQuickstartBlazor.Shared
+
+<div data-test-id="Error" class="errorTop"></div>
+<SingleContainer>
+    <Header>
+        <Note IsError="true"> @* error className={styles.code}>*@
+            Error
+        </Note>
+    </Header>
+    <Contents>
+        <div class="errorItem">
+            <span class="errorTitle">Error code: </span>
+            <span class="errorData">
+                <span class="errorCode">
+                    @ErrorContent?.error_code
+                </span>
+            </span>
+        </div>
+        <div class="errorItem">
+            <span class="errorTitle">Type: </span>
+            <span class="errorData">@ErrorContent?.error_type</span>
+        </div>
+        <div class="errorItem">
+            <span class="errorTitle">Message: </span>
+            <span class="errorMessage">
+                @(ErrorContent?.display_message ?? ErrorContent?.error_message)
+            </span>
+        </div>
+    </Contents>
+        <Buttons>
+            @if (ErrorContent?.Url is not null)
+            {
+                <a class="btn btn-danger learnMore" href="@ErrorContent.Url" target="_blank">Learn more</a>
+            }
+        </Buttons>
+</SingleContainer>
+
+@code {
+    [Parameter]
+    public PlaidError? ErrorContent { get; set; }
+}

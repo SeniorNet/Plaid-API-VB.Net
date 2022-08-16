@@ -1,0 +1,30 @@
+﻿@page "/"
+@using PlaidQuickstartBlazor.FrontEnd.Components
+@using PlaidQuickstartBlazor.Shared
+@inject ContextContainer context
+
+<div data-test-id="IndexPage" class="pq-container">
+    <Header />
+    @if (context.LinkSuccess)
+    {
+        <div>
+            <Products />
+            <Items />
+            <ProductTypesContainer ProductType="Token Management">
+                <Link IsFixingToken="true" />
+            </ProductTypesContainer>
+        </div>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        context.OnChange += StateHasChanged;
+    }
+
+     public void Dispose()
+    {
+        context.OnChange -= StateHasChanged;
+    }
+}

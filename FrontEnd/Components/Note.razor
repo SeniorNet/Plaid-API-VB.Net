@@ -1,0 +1,12 @@
+<span data-test-id="Note" class="info post @alert_danger">@ChildContent</span>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public bool? IsError { get; set; }
+
+    private string alert_danger => (IsError == true) ? "alert-danger": string.Empty;
+
+}

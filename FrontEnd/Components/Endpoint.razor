@@ -1,0 +1,116 @@
+@using PlaidQuickstartBlazor.Shared
+@using System.Text.RegularExpressions
+@inject HttpClient Http
+
+<SingleContainer data-test-id="@TestId">
+    <Header>
+        <Note>
+            POST
+        </Note>
+    </Header>
+    <Contents>
+        <div class="endpointHeader">
+            @if ( Name is not null )
+            {
+                <span class="endpointName">@Name</span>
+            }
+            <span class="schema">@Schema</span>
+        </div>
+        <div class="endpointDescription">@Description</div>
+    </Contents>
+    <Buttons>
+        @if (isLoading)
+        {
+            <button class="btn btn-primary sendRequest" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        }
+        else
+        {
+            <button 
+                data-test-id="btn-request" 
+                type="button"
+                class="btn btn-primary sendRequest"
+                @onclick="GetData"
+                >
+                Send request
+            </button>
+        }
+    </Buttons>
+</SingleContainer>
+
+@if (TableData is not null)
+{
+    <Table Data="@TableData" />
+}
+@if (ErrorDetails is not null)
+{
+    <Error ErrorContent="@ErrorDetails"></Error>
+}
+@if (ErrorValue is not null)
+{
+    <p class="alert-danger p-2 my-2">@ErrorValue</p>
+}
+
+@code {
+    [Parameter]
+    public string? Api { get; set; }
+
+    [Parameter]
+    public string? Name { get; set; }
+
+    [Parameter]
+    public string? Schema { get; set; }
+
+    [Parameter]
+    public string? Description { get; set; }
+
+    private bool isLoading { get; set; }
+
+    private DataTable? TableData { get; set; }
+
+    private PlaidError? ErrorDetails { get; set; }
+
+    private string? ErrorValue { get; set; }
+
+    private string TestId
+    {
+        get
+        {
+            var name = Name is not null ? Name : 
+                (Schema is not null ? Schema : "null");
+
+            // trim beginning and ending non-alpha
+            var regex = new Regex("\\W+");
+            return "endpoint-" + regex.Replace(name, "").ToLowerInvariant();
+        }
+    }
+
+    private async Task GetData()
+    {
+        isLoading = true;
+        ErrorDetails = null;
+        TableData = null;
+
+        try
+        {
+            var response = await Http.GetAsync($"Fetch/{Api}");
+            if (response.IsSuccessStatusCode)
+            {
+                TableData = await response.Content.ReadFromJsonAsync<DataTable>();             
+            }
+            else
+            {
+                ErrorDetails = await response.Content.ReadFromJsonAsync<PlaidError>();
+            }
+        }
+        catch (Exception ex)
+        {
+            // TODO: Prettier display of error information
+            ErrorValue = ex.Message;
+        }
+
+        isLoading = false;
+    }
+}

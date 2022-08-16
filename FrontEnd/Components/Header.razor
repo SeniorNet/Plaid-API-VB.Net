@@ -1,0 +1,67 @@
+@using PlaidQuickstartBlazor.Shared
+@using System.Runtime.InteropServices
+@inject ContextContainer context
+
+<div data-test-id="Header" class="grid">
+    <h2 class="title">Plaid Quickstart</h2>
+
+    @if(!context.LinkSuccess)
+    {
+        <h4 class="subtitle">
+            A sample end-to-end integration with Plaid
+        </h4>
+        <p>
+            The Plaid flow begins when your user wants to connect their bank
+            account to your app. Simulate this by clicking the button below to
+            launch Link - the client-side component that your users will
+            interact with in order to link their accounts to Plaid and allow you
+            to access their accounts via the Plaid API.
+        </p>
+
+        <div class="linkButton">
+            <Link />
+        </div>
+    }
+    else
+    {
+        <h4 class="subtitle">
+            Congrats! By linking an account, you have created an <a 
+            href="http://plaid.com/docs/quickstart/glossary/#item"
+            target="_blank"
+            >Item</a>.
+        </h4>
+
+        <div class="itemAccessContainer">
+            <p class="itemAccessRow">
+                <span class="idName">item_id</span>
+                <span class="tokenText">@context.Credentials?.ItemId</span>
+            </p>
+
+            <p class="itemAccessRow">
+                <span class="idName">access_token</span>
+                <span class="tokenText">@context.Credentials?.AccessToken</span>
+            </p>
+        </div>
+
+        @if (context.IsItemAccess)
+        {
+            <p class="requests">
+              Now that you have an access_token, you can make all of the
+              following requests:
+            </p>
+        }
+    }
+
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        context.OnChange += StateHasChanged;
+    }
+
+     public void Dispose()
+    {
+        context.OnChange -= StateHasChanged;
+    }
+}
